@@ -1,0 +1,9 @@
+
+[
+  {"title": "Home","to": "/"},
+  { "title": "Shop", "to": "/shop/products" },
+  { "title": "Privacy Policy", "to": "/shop/products" },
+  { "title": "Terms & Conditions", "to": "/shop/products" },
+  { "title": "Download App", "to": "/shop/products" }
+
+]
