@@ -27,6 +27,7 @@ import Loading from "../../components/Other/Loading";
 import { removeAllFromCart } from "../../redux/actions/cartActions";
 import styled from "styled-components";
 import Swal from "sweetalert2";
+import { FaCircleDot } from "react-icons/fa6";
 
 export default function () {
   const cartState = useSelector((state) => state.cartReducer);
@@ -35,6 +36,7 @@ export default function () {
   const [loading, setLoading] = useState(false);
   const [coupon, setCoupon] = useState("");
   const [show, setShow] = useState(false);
+  const [showPayNowButton, setShowPayNowButton] = useState(false);
   const isAuthenticated = useSelector(
     (state) => state.userReducer.isAuthenticated
   );
@@ -57,7 +59,6 @@ export default function () {
 
   const onSubmit = async (data) => {
     try {
-
       setLoading(true);
       let allCartProducts = [];
       for (let i = 0; i < cartState?.length; i++) {
@@ -235,9 +236,31 @@ export default function () {
   const router = useRouter();
   console.log("start", cartState);
 
+  //razorpay details of key id and secret
+
+  const [razorpayData, setRazorpayData] = useState([]);
+
+  const razorpayKeyDetails = async () => {
+    const app_id = "appid-7151-099964-7311";
+    try {
+      console.log("razorpay data-========>");
+      const res = await axios.get(
+        `${baseUrl}/api/admin/get/plugin/razorpay/detail_web/${app_id}`
+      );
+      setRazorpayData(res?.data?.plugin_details);
+      console.log("razorpay key id", res?.data?.plugin_details?.razorpay_key_id);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    razorpayKeyDetails();
+  }, []);
+
   const createOrder = async () => {
     try {
-      // console.log('order', amount);
+      console.log('start=====> ');
       if (!currentUser) {
         return toast.warning("Please login and try again !");
       }
@@ -260,7 +283,7 @@ export default function () {
 
       if (res.data.success) {
         var options = {
-          key: "rzp_test_EvIoEIsCWhUpjf", // Enter the Key ID generated from the Dashboard
+          key: razorpayData?.razorpay_key_id, // Enter the Key ID generated from the Dashboard
           amount: res.data.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
           currency: "INR",
           name: "Acme Corp", //your business name
@@ -290,7 +313,7 @@ export default function () {
               ),
             });
 
-            console.log("payment order ", res);
+            console.log("payment order =============> ", res);
 
             if (res.data.success) {
               Swal.fire({
@@ -754,21 +777,43 @@ export default function () {
                         </>
                       ) : (
                         <>
-                          <button
+                          {/* <button
                             className="btn -red"
                             onClick={() => {
                               handleSubmit(onSubmit)
-                              createOrder()
+                              // createOrder()
                             }}
                           >
                             Place order
-                          </button>
+                          </button> */}
+
+                          <div>
+                            <input
+                              type="radio"
+                              id="payNowOption"
+                              name="paymentOption"
+                              style={{ marginTop: "10px" }}
+                              // className="btn -red"
+                              onChange={() => {
+                                handleSubmit(onSubmit);
+                                // createOrder();
+                                setShowPayNowButton(false);
+                              }}
+                            />
+                            <label
+                              htmlFor="payNowOption"
+                              style={{ marginLeft: "10px" }}
+                            >
+                              Cash on delivery
+                            </label>
+                          </div>
 
                           {/* <button
                             style={{ marginTop: "10px" }}
                             className="btn -red"
-                            onClick={async () => {
-                              await createOrder();  
+                            onClick={() => {
+                              handleSubmit(onSubmit)
+                              createOrder()
                             }}
                           >
                             Pay Now{" "}
@@ -783,6 +828,65 @@ export default function () {
                               </span>
                             }
                           </button> */}
+
+                          {/* <div>
+                            <input
+                              type="radio"
+                              id="payNowOption"
+                              name="paymentOption"
+                              style={{ marginTop: "10px" }}
+                              onChange={() => {
+                                handleSubmit(onSubmit);
+                                createOrder();
+                              }}
+                            />
+                            <label htmlFor="payNowOption" style={{ marginLeft: "10px"}}>
+                              Online Payment
+                            </label>
+                          </div> */}
+
+                          <div>
+                            <div>
+                              <input
+                                type="radio"
+                                id="payNowOption"
+                                name="paymentOption"
+                                style={{ marginTop: "10px" }}
+                                onChange={() => {
+                                  handleSubmit(onSubmit);
+                                  // createOrder();
+                                  setShowPayNowButton(true);
+                                }}
+                              />
+                              <label
+                                htmlFor="payNowOption"
+                                style={{ marginLeft: "10px" }}
+                              >
+                                Online Payment
+                              </label>
+                            </div>
+
+                            {showPayNowButton && (
+                              <button
+                                style={{ marginTop: "10px" }}
+                                className="btn -red"
+                                onClick={() => {
+                                  handleSubmit(onSubmit);
+                                  createOrder();
+                                }}
+                              >
+                                Pay Now{" "}
+                                <span>
+                                  {calculateTotalPriceAfterCoupon(
+                                    cartState,
+                                    true,
+                                    couponAmount,
+                                    couponType
+                                  )}
+                                </span>
+                              </button>
+                            )}
+                          </div>
                         </>
                       )}
                     </div>

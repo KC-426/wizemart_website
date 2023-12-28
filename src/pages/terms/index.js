@@ -6,6 +6,7 @@ import axios from "axios"
 import { baseUrl } from "../../../config"
 import TermsAndConditions from "../../components/Sections/Terms/Terms"
 
+
 export default function() {
     return (
         <LayoutFour title="Terms & Conditions">

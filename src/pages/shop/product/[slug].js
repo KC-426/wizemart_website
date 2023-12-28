@@ -268,7 +268,7 @@ const selectedProductVariantColorFunc=(value)=>{
         </>
       ) : (
         <LayoutFour title={foundProduct.name}>
-          <Breadcrumb title="Product Detail">
+          <Breadcrumb title={foundProduct.name} >
             <BreadcrumbItem name="Home" />
             <BreadcrumbItem name="Shop" />
             <BreadcrumbItem name={foundProduct.name} current />

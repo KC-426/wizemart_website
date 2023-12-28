@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next dev",
-    "build": "cross-env NODE_OPTIONS='--openssl-legacy-provider' next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start -H 0.0.0.0 -p ${PORT:-8080}",
     "export": "npm run build && next export"
   },
@@ -28,6 +28,8 @@
     "react-dom": "16.13.1",
     "react-hook-form": "^5.7.2",
     "react-hooks-paginator": "^0.5.1",
+    "react-html-parser": "^2.0.2",
+    "react-icons": "^4.12.0",
     "react-image-lightbox": "^5.1.1",
     "react-lightgallery": "^0.6.3",
     "react-mailchimp-subscribe": "^2.1.0",
